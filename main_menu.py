@@ -32,7 +32,7 @@ Cosa vuoi fare?
                         while True:
                             new_concerto={}
                             
-                        gestione_concerti.setConcerto()
+                    
                     elif scelta == 2:
                         gestione_concerti.nearConcerto()
                     elif scelta == 3:
@@ -46,13 +46,16 @@ Cosa vuoi fare?
         elif risp == 2:
             while True:
                 print("""
+                      
 Cosa vuoi fare?
     # 1. Get Ticket
     # 2. Set Ticket
     # 3. Remove Ticket
-    # 4. Esci""")
+    # 4. Esci
+    
+    """)
                 try:
-                    scelta = int(input("La tua scelta: "))
+                    scelta = int(input("Inserisci il numero della tua scelta: "))
                     if scelta == 1:
                         
                         gestione_concerti.getTicket()
