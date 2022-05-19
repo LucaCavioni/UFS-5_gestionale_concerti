@@ -2,8 +2,9 @@ import json
 from tkinter.messagebox import NO
 from colorama import deinit
 from matplotlib import artist
-from pymongo import MongoClient
+# from pymongo import MongoClient
 from bson import ObjectId, objectid as bid
+from pymongo import MongoClient
 
 # inserire di defolt il prjc dei campi in comune con il ticket
 # db.COLLECTION_NAME.find().sort({KEY:1}) da implemetare?
@@ -132,102 +133,93 @@ class GestioneConcerti:
 
 
 if __name__ == "__main__":
-    query_delete = {
-        '_id': ''
-    }
 
-    query_concerto_new = {
-        "titolo": "",
-        "artisti": [],
-        "tour": "",
-        "data": "",
-        "luogo": {
-            "nome": "",
-            "via": "",
-            "coordinate": ""
-        },
-        "posti": [
-            {
-                "area": "a",
-                "n_postiRimasti": "10",
-                "prezzo": ""
-            }
-        ]
-    }
-
-    query_concerto_find = {
-        "titolo": "",
-        "artisti": [],
-    }
-
-    query_ticket_new = {
-        "nserie": "01001",
-        "id_concerto": "",
-        "nome": "",
-        "cognome": "",
-        "qrcode": "",
-        "aquirente": "",
-        "posto": {
-            "area": "",
-            "numero": "",
-            "fila": ""
-        },
-        "prezzo": "",
-        "data": "timestamp"
-    }
-
-    query_ticket_find = {
-        "nome": "fabio",
-        "cognome": "rossi"
-    }
     temp = GestioneConcerti()
-
-    with open(r'.\MongoDB\concerti.json') as json_file:
+    with open('concerti.json') as json_file:
         new_concerto = json.load(json_file)
+    while True:
+        print("""      
+            Cosa vuoi fare?
+# 1. Inserisci concerto massivo
+# 2. Inserisci un concerto
+# 3. Modifica concerto
+# 4. Cerca concerto vicino a milano
+# 5. Stampa tutti i concerti
+# 6. Elimina tutti concerti
+# 7. Inserisci ticket
+# 8. Modifica ticket
+# 9. Stampa tutti i ticket
+# 10. Elimina tutti ticket
+# 11. Elimina tutto
+            
+            # 0. Termina sessione
+            """)
+        try:
+            scelta = int(input("Inserisci il numero della tua scelta: "))
 
-    temp.removeConcerto()
-    temp.removeTicket()
+            if scelta == 0:
+                print("Alla prossima")
+                break
 
-    temp.setConcerto(new_concerto, True)
-    found_concert = temp.getConcerto(
-        {'titolo': new_concerto[0]['titolo']}, {'artisti': 1, '_id': 1})
-    found_concert[0]['tour'] = 'jdsufhfdsldsfkj'
-    a = temp.setConcerto(found_concert[0])
-    # print(a)
-    near = temp.nearConcerto([45.48307873172699, 9.13053663872388])
-    # print(near[0]['luogo']['posizione'])
-    # print(near[0]['luogo']['citta'])
-    # for e in near:
-    #     print(e['luogo']['citta'], end=' ')
-    #     print(e['luogo']['posizione'])
-    print(found_concert[0]['_id'])
-    new_ticket = {
-        "concerto": str(found_concert[0]['_id']),
-        "nome": "Luca",
-                "cognome": "Cavioni",
-                "aquirente": "sadsadasdsas",
-                "posti": {
-                    "area": "prato gold",
-        }
-    }
-    # new_ticket = {
-    #     "nserie": "",
-    #     "id_concerto": id,
-    #     "nome": "Luca",
-    #             "cognome": "Cavioni",
-    #             "aquirente": "sadsadasdsas",
-    #             "posti": {
-    #                 "area": "PP",
-    #                 "numero": 10,
-    #                 "fila": 10
-    #             }
-    # }
-    t = []
-    for e in new_concerto:
-        t.append(new_ticket)
-    temp.setTicket(t, True)
-    for a in temp.getTicket():
-        print(a)
+            elif scelta == 1:
+                a = temp.setConcerto(new_concerto, True)
+                for e in a.inserted_ids:
+                    print('ID Inserito     -----  '+str(e))
 
-    temp.removeConcerto()
-    temp.removeTicket()
+            elif scelta == 2:
+                print(new_concerto[4])
+                a2=temp.setConcerto(new_concerto[4], True)
+                for e in a2.inserted_ids:
+                    print('ID Inserito     -----  '+str(e))
+
+            elif scelta == 3:
+                titolo = input('dammi il nome di un concerto che ti piace <3')
+                found_concert = temp.getConcerto(prjc={'artisti': 1, '_id': 1})
+                found_concert[0]['tour'] = titolo
+                a = temp.setConcerto(found_concert[0])
+                print(a)
+
+            elif scelta == 4:
+                near = temp.nearConcerto([45.48307873172699, 9.13053663872388])
+                print(near)
+
+            elif scelta == 5:
+                for a in temp.getConcerto():
+                    print(a)
+            elif scelta == 6:
+                temp.removeConcerto()
+
+            elif scelta == 7:
+                found_concert = temp.getConcerto(prjc={'artisti': 1, '_id': 1})
+                new_ticket = {
+                    "concerto": str(found_concert[0]['_id']),
+                    "nome": "Luca",
+                    "cognome": "Cavioni",
+                    "acquirente": "sadsadasdsas",
+                    "posti": {
+                        "area": "prato gold",
+                    }
+                }
+                temp.setTicket(new_ticket, True)
+
+            elif scelta == 8:
+                found_ticket = temp.getTicket()
+                if len(found_ticket) > 0:
+                    acquirente = input(
+                        'inserisci il nome di un acquirente a che ti piace <3')
+                    found_ticket[0]['acquirente'] = acquirente
+                    print(temp.setTicket(found_ticket[0]))
+
+            elif scelta == 9:
+                for a in temp.getTicket():
+                    print(a)
+
+            elif scelta == 10:
+                temp.removeTicket()
+
+            elif scelta == 11:
+                temp.removeConcerto()
+                temp.removeTicket()
+
+        except:
+            print("Devi inserire un numero")
