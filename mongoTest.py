@@ -150,10 +150,12 @@ if __name__ == "__main__":
 # 8. Modifica ticket
 # 9. Stampa tutti i ticket
 # 10. Elimina tutti ticket
-# 11. Elimina tutto
+# 11. Elimina tuttoù
+# 0. Termina sessione
             
             # 0. Termina sessione
             """)
+
         try:
             scelta = int(input("Inserisci il numero della tua scelta: "))
 
@@ -191,11 +193,44 @@ if __name__ == "__main__":
 
             elif scelta == 7:
                 found_concert = temp.getConcerto(prjc={'artisti': 1, '_id': 1})
+                name= input("Nome:")
+                surname= input("Cognome:")
+                nome_conc = input("Nome del concerto:").lower()
+                try:
+                    while True:
+                        acquir= int(input('''L'acquirente sei tu?
+                        # 1. Sì
+                        # 2. No
+                        '''))
+                        if acquir == 1:
+                            acquirente= f"{name} {surname}"
+                            break
+                        elif acquir == 2:
+                            acquirente= input("Inserisci nome e cognome dell'acquirente")
+                            break
+                        else:
+                            print("Inserisci un numero tra quelli indicati")
+                while True:            
+                    zona= input("In che zona del luogo vuoi prenotare?")
+                    if zona in new_concerto["posti"]["area"]:
+                        if new_concerto["titolo"] == nome_conc or new_concerto["tour"] == nome_conc:
+                            break
+                        else:
+                            print("Il concerto non esiste")
+                    else:
+                        print("La zona non esiste")
+
+
+                    
+                    
+                except:
+                    print("Inserisci un numero")
+                
                 new_ticket = {
                     "concerto": str(found_concert[0]['_id']),
-                    "nome": "Luca",
-                    "cognome": "Cavioni",
-                    "acquirente": "sadsadasdsas",
+                    "nome": name,
+                    "cognome": surname,
+                    "acquirente": acquirente,
                     "posti": {
                         "area": "prato gold",
                     }
@@ -220,6 +255,23 @@ if __name__ == "__main__":
             elif scelta == 11:
                 temp.removeConcerto()
                 temp.removeTicket()
+            else:
+                print("Inserisci un numero tra quelli indicati")
+            
 
         except:
             print("Devi inserire un numero")
+        try:          
+            again= int(input('''Vuoi eseguire altre operazioni?
+            # 1. Sì
+            # Altri numeri: No
+            ''')
+            if again == 1:
+                pass
+            else:
+                break               
+      
+                       
+        except:
+              print("Inserisci un numero")
+                   
